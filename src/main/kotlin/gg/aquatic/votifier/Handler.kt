@@ -16,14 +16,6 @@ object Handler {
         tokens[website] = createKeyFrom(token)
     }
 
-    fun onVoteReceived(vote: Vote, remoteAddress: String) {
-
-    }
-
-    fun onError(throwable: Throwable, voteAlreadyCompleted: Boolean, remoteAddress: String) {
-
-    }
-
     fun createKeyFrom(token: String): Key {
         return SecretKeySpec(token.toByteArray(StandardCharsets.UTF_8), "HmacSHA256")
     }

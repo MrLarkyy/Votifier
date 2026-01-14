@@ -1,9 +1,9 @@
 package gg.aquatic.votifier.protocol
 
 import com.google.gson.JsonObject
-import gg.aquatic.votifier.Handler
 import gg.aquatic.votifier.Session
 import gg.aquatic.votifier.Vote
+import gg.aquatic.votifier.VotifierListener
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
@@ -11,7 +11,9 @@ import io.netty.channel.SimpleChannelInboundHandler
 import java.util.concurrent.atomic.AtomicLong
 
 @ChannelHandler.Sharable
-class InboundHandler: SimpleChannelInboundHandler<Vote>() {
+class InboundHandler(
+    private val listener: VotifierListener
+): SimpleChannelInboundHandler<Vote>() {
 
     private val lastError: AtomicLong = AtomicLong()
     private val errorsSent: AtomicLong = AtomicLong()
@@ -19,7 +21,7 @@ class InboundHandler: SimpleChannelInboundHandler<Vote>() {
     override fun channelRead0(ctx: ChannelHandlerContext, vote: Vote) {
         val session = ctx.channel().attr(Session.KEY).get()
 
-        Handler.onVoteReceived(vote, ctx.channel().remoteAddress().toString())
+        listener.onVoteReceived(vote, ctx.channel().remoteAddress().toString())
         session.completeVote()
 
         val obj = JsonObject()
@@ -40,7 +42,7 @@ class InboundHandler: SimpleChannelInboundHandler<Vote>() {
         ctx.writeAndFlush(obj.toString() + "\r\n").addListener(ChannelFutureListener.CLOSE)
 
         if (!willThrottleErrorLogging()) {
-            Handler.onError(cause, hasCompletedVote, remoteAddr)
+            listener.onError(cause, hasCompletedVote, remoteAddr)
         }
     }
 

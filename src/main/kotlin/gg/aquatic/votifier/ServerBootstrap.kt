@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit
 class ServerBootstrap(
     val host: String,
     val port: Int,
+    private val listener: VotifierListener
 ) {
     companion object {
 
@@ -60,7 +61,7 @@ class ServerBootstrap(
     fun start(error: (Throwable?) -> Unit) {
         Objects.requireNonNull<Any?>(error, "error")
 
-        val voteInboundHandler = InboundHandler()
+        val voteInboundHandler = InboundHandler(listener)
 
         ServerBootstrap()
             .channel(if (useEpoll) EpollServerSocketChannel::class.java else NioServerSocketChannel::class.java)
