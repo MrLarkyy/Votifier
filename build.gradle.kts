@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.netty:netty-handler:4.2.12.Final")
+    implementation("io.netty:netty-handler:4.2.18.Final")
     implementation("io.netty:netty-transport-native-epoll:4.2.12.Final:linux-x86_64")
     implementation("com.google.code.gson:gson:2.14.0")
 }
